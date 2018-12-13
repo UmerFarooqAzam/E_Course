@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>A</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+   <!-- Dropdown Structure -->
+
+    <%= render 'shared/header' %>  
+     <%= render 'shared/message' %>      
+    <main>
+      <div class="container">
+        <%= yield %>   
+      </div>
+    </main>
+   <%= render 'shared/footer' %> 
+
+
+  </body>
+  <script >
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems, options);
+    });
+
+    // Or with jQuery
+
+    $(document).ready(function(){
+      $('.sidenav').sidenav();
+    });
+         
+    
+    $(".dropdown-trigger").dropdown();
+  </script>
+  <script type="text/javascript">
+    var instance = M.Tabs.init(el, options);
+
+  // Or with jQuery
+
+  $(document).ready(function(){
+    $('.tabs').tabs();
+  });
+        
+  </script>
+</html>

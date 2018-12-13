@@ -1,0 +1,27 @@
+<h1>This is my project</h1>
+<div class="row">
+	<br/>
+	<% if @projects.count > 0%>
+		<% @projects.each do |project|%>
+			<%= link_to project do %>
+				<div class="col s12 m6 l4">
+					<div class="card">
+						<div class="card-image ">
+						<%= image_tag project.image(:thumb)%>
+						</div>
+						<div class="card-content" style="height: 6em">
+							<span class="card-title grey-text text-darken-4">
+								<%= project.shortname%>				
+							</span>
+						</div>			
+					</div>
+				</div>
+			<%end%>	
+		<%end%>
+	<%else%>	
+		<div class="center">
+			<h5>Currently You are not in any Project! </h5>
+			<%= link_to "Show me all projects" ,root_path ,class:"btn btn-primary" %>
+		</div>
+	<%end%>	
+</div>

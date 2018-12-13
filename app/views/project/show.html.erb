@@ -1,0 +1,130 @@
+<div class="row">
+	<div class="col m4">
+		<div class="card z-depth-2">
+			<% if !@joined%>
+			<div class="center">
+				<h1><%= @project.price == 0? "Free" : "$#{@project.price}"%></h1>
+			</div>
+			<div class="card-action center">
+				<% if user_signed_in? %>
+					<% if @project.price == 0 %>
+						<%= form_tag free_path do %>
+							<%= hidden_field_tag 'project_id',@project.id %>
+						<button type="submit" class="btn pink darken-2" >Take this Project</button>
+						<%end%>
+					<%else%>	
+					<%= form_tag pay_path ,id:"chargeForm" do %>
+					<script src="https://checkout.stripe.com/checkout.js"></script>
+					<%= hidden_field_tag 'stripeToken'%>	
+					<%= hidden_field_tag 'stripeEmail '%>	
+					<%= hidden_field_tag 'project_id',@project%>	
+						<button id="customButton" type="button" class="btn pink darken-2">Take This Project</button>
+
+						<script>
+						var handler = StripeCheckout.configure({
+						  key: 'pk_test_BLdgiOLCEj0zP0TGhD8dNec0',
+						  token: function(token,arg) {
+						    $('#stripeToken').val(token.id);
+						    $('#stripeEmail').val(token.email);
+						    $('#chargeForm').submit();
+						  }
+						});
+
+						document.getElementById('customButton').addEventListener('click', function(e) {
+						  // Open Checkout with further options:
+						  handler.open({
+						    name: 'E-Learning',
+						    description: '<%= @project.name%>',
+						    currency: 'usd',
+						    amount: '<%= @project.price_in_cents%>',
+						    email: '<%= current_user.email%>'
+						  });
+						  e.preventDefault();
+						});
+						</script>
+						<%end%>
+					<%end%>	
+				<%else%>
+					<%= link_to new_user_session_path do %>
+					<button type="submit" class="btn pink darken-2" >Take this Project</button>
+					<%end%>
+				<% end%>
+			</div>
+			<%else%>
+			<div class="center card-content">
+				<%= image_tag avatar_url(current_user),class:"circle responsive-img avatar-medium"%><br/>
+				<h5><%= current_user.name%></h5>
+			</div>
+			
+			<div class="card-action center">
+				<span class="valign-wrapper">
+				<% @users.each do |u|%>
+				<%= image_tag avatar_url(u),class:"circle responsive-img avatar-small"%> &nbsp;
+				<%= u.name%><br/>
+				</span>
+				<%end%>	
+								
+			</div>
+		<%end%>	
+		</div>
+	</div>	
+	<div class="col m8">
+		<div class="card z-depth-2">
+			<div class="card-image">
+			 	<%= image_tag @project.image(:medium) %>
+			 </div>
+			<div class="row">
+			    <div class="col s12">
+			      <ul class="tabs">
+			        <li class="tab col s3"><a href="#about" class="active" >About</a></li>
+			        <li class="tab col s3"><a href="#videos">Videos</a></li>
+			        <li class="tab col s3 disabled"><a href="#discussion">Discussion</a></li>
+			      </ul>
+			    </div>
+			    <div id="about" class="col s12">
+			    	<div class="card-content grey-text text-darken-4">
+						<h5><%= @project.name%></h5>
+						<span id="average_rating"></span>
+						<span><%= @project.average_rating%><%= @reviews.count %> <%= @reviews.count > 1? "Reviews" : "Review"%></span>
+						<hr>
+						<%= @project.content%>
+							<h4>Reviews</h4>
+						<div><%= render 'reviews/form' if @joined && !@hasReview%></div>
+						<div><%= render 'reviews/index'%></div>
+					</div> 
+			
+			    </div>
+			    <div id="videos" class="col s12">
+			    	<div class="collection" data-no-turbolink>
+						<% @tasks.each do |task|%>
+								<%if task.header%>
+									<div class="collection-item active">
+									<i class="mdi-social-school"><%= task.title%></i>
+									</div>
+								<%else%>
+								 	<%= link_to [task.project,task],class:"collection-item" do %>
+								 		<%= task.note%>
+						 		<%end%>
+							<%end%>
+						<%end%>
+					</div>
+			    </div>
+			    <div id="discussion" class="col s12">
+			    	
+			    </div>
+			    
+		    </div>
+			
+		</div>		
+	</div>
+</div>
+
+<script >
+	$('#average_rating').raty({
+		path:'/assets',
+		readOnly: true,
+		score: <%= @project.average_rating%>
+	});
+</script>
+
+
